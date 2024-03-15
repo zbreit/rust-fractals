@@ -125,14 +125,57 @@ mod tests {
 
     const DELTA: f64 = std::f64::EPSILON * 10.0;
 
+    macro_rules! assert_approx_equals {
+        ($expect: expr, $actual: expr, $delta: expr) => {
+            if ($expect.re - $actual.re).abs() > $delta || ($expect.im - $actual.im).abs() > $delta
+            {
+                panic!();
+            }
+        };
+    }
+
     #[test]
     fn add() {
         let a = Complex { re: 2.5, im: 4.3 };
         let b = Complex { re: 20.0, im: 10.0 };
-        let result = a + b;
         let expect = Complex { re: 22.5, im: 14.3 };
 
-        assert!((result.re - expect.re).abs() < DELTA);
-        assert!((result.im - expect.im).abs() < DELTA);
+        assert_approx_equals!(expect, a + b, DELTA);
+    }
+
+    #[test]
+    fn sub() {
+        let a = Complex { re: 2.5, im: 4.3 };
+        let b = Complex { re: 20.0, im: 10.0 };
+        let expect = Complex {
+            re: -17.5,
+            im: -5.7,
+        };
+
+        assert_approx_equals!(expect, a - b, DELTA);
+    }
+
+    #[test]
+    fn multiply() {
+        let a = Complex { re: 2.5, im: -4.3 };
+        let b = Complex { re: 20.0, im: 10.0 };
+        let expect = Complex {
+            re: 93.0,
+            im: -61.0,
+        };
+
+        assert_approx_equals!(expect, a * b, DELTA);
+    }
+
+    #[test]
+    fn divide() {
+        let a = Complex { re: 2.5, im: -4.3 };
+        let b = Complex { re: 20.0, im: 10.0 };
+        let expect = Complex {
+            re: 0.014,
+            im: -0.222,
+        };
+
+        assert_approx_equals!(expect, a / b, DELTA);
     }
 }

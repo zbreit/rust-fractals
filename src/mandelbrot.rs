@@ -20,6 +20,5 @@ pub fn mandelbrot(c: Complex, max_iterations: u16, escape_magnitude: f64) -> Cal
         }
     }
 
-    println!("{:?}, {:?}", c, z);
     CalcResult::Bounded
 }

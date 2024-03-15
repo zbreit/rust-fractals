@@ -1,6 +1,7 @@
-use image::{ImageBuffer, Rgb, RgbImage};
+use image::{Rgb, RgbImage};
 use mandelbrot::CalcResult;
 use math::clamp;
+use std::ops::Sub;
 
 use crate::{mandelbrot::mandelbrot, nums::Complex};
 
@@ -8,15 +9,27 @@ mod mandelbrot;
 mod math;
 mod nums;
 
-pub struct Rect<T> {
+pub struct Rect<T: Sub> {
     top: T,
     left: T,
-    width: T,
-    height: T,
+    bottom: T,
+    right: T,
+}
+
+impl Rect<f64> {
+    #[inline]
+    pub fn width(&self) -> f64 {
+        self.right - self.left
+    }
+
+    #[inline]
+    pub fn height(&self) -> f64 {
+        self.top - self.bottom
+    }
 }
 
 fn color_from_index(index: u16, max_iters: u16) -> Rgb<u8> {
-    let div: f64 = (std::u8::MAX as f64) * 3.0;
+    let div: f64 = (std::u8::MAX as f64) * 3.0 * (index as f64);
 
     let sub: f64 = div / (max_iters as f64);
 
@@ -42,8 +55,8 @@ fn draw_mandelbrot(width: u32, height: u32, bounds: Rect<f64>) -> RgbImage {
             let pct_x: f64 = (x as f64) / (width as f64);
             let pct_y: f64 = (y as f64) / (height as f64);
             let c = Complex {
-                re: pct_x / bounds.width - bounds.left,
-                im: pct_y / bounds.height - bounds.top,
+                re: bounds.left + pct_x * bounds.width(),
+                im: bounds.top - pct_y * bounds.height(),
             };
 
             let max_iters = 100;
@@ -62,14 +75,14 @@ fn draw_mandelbrot(width: u32, height: u32, bounds: Rect<f64>) -> RgbImage {
 
 fn main() {
     let bounds = Rect::<f64> {
-        top: 1.12,
-        left: -2.0,
-        width: 2.0,
-        height: 2.0,
+        top: 1.5,
+        left: -1.5,
+        right: 1.5,
+        bottom: -1.5,
     };
 
     let image = draw_mandelbrot(512, 512, bounds);
 
-    // TODO: handle error case
+    // TODO: handle error case if image fails to save
     image.save("./mandelbrot.png").unwrap();
 }
