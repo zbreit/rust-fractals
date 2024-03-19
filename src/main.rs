@@ -76,12 +76,12 @@ fn draw_mandelbrot(width: u32, height: u32, bounds: Rect<f64>) -> RgbImage {
 fn main() {
     let bounds = Rect::<f64> {
         top: 1.5,
-        left: -1.5,
-        right: 1.5,
+        left: -2.0,
+        right: 1.0,
         bottom: -1.5,
     };
 
-    let image = draw_mandelbrot(512, 512, bounds);
+    let image = draw_mandelbrot(2048, 2048, bounds);
 
     // TODO: handle error case if image fails to save
     image.save("./mandelbrot.png").unwrap();
