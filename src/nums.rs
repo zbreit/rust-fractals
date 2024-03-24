@@ -15,6 +15,10 @@ impl Complex {
     }
 
     pub fn mag(self) -> f64 {
+        self.square_mag().sqrt()
+    }
+
+    pub fn square_mag(self) -> f64 {
         self.re.powi(2) + self.im.powi(2)
     }
 }
@@ -177,5 +181,15 @@ mod tests {
         };
 
         assert_approx_equals!(expect, a / b, DELTA);
+    }
+
+    #[test]
+    fn mag() {
+        let a = Complex { re: 2.5, im: -4.3 };
+        let mag = 4.97393;
+        let square_mag = mag * mag;
+
+        assert!((mag - a.mag()).abs() < 1e-4);
+        assert!((square_mag - a.square_mag()).abs() < 1e-4);
     }
 }
