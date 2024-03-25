@@ -164,6 +164,9 @@ fn main() {
 
             let zoom = ((scroll.abs() as f64) * ZOOM_SCALE_FACTOR).powf(scroll.signum() as f64);
             let x = map_range(mouse_x as f64, 0.0, WIDTH as f64, bounds.left, bounds.right);
+
+            // Note: the input bounds are reversed because the mouse y position *increases* as you
+            // click further down on the window
             let y = map_range(
                 mouse_y as f64,
                 HEIGHT as f64,
@@ -172,26 +175,9 @@ fn main() {
                 bounds.top,
             );
 
-            // let (center_x, center_y) = bounds.midpoint();
-
-            // let new_x = center_x - x / (zoom) + x;
-            // let new_y = center_y - y / (zoom) + y;
-
-            // scale *= zoom;
-
-            // let old_bounds = bounds.clone();
-            // bounds = bounds.scale(zoom).center_on(new_x, new_y);
             bounds = bounds.zoom_to((x, y), zoom);
-
-            println!("scrolling - wx {mouse_x} wy {mouse_y} scroll {scroll}");
-            println!("x {x} y {y} zoom {zoom}");
-            // println!("nx {new_x} ny {new_y}");
-            // println!("cx {center_x} cy {center_y}");
-            // println!("old bounds {old_bounds:?}");
-            println!("bounds {bounds:?}");
-            println!();
-
             image = draw_mandelbrot(WIDTH as u32, &bounds);
+
             gui_update(&mut window, &image);
 
             continue;

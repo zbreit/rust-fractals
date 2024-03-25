@@ -61,6 +61,27 @@ impl Rect<f64> {
         )
     }
 
+    /// Zooms to a given point by the specified zoom amount. Maintains the relative position
+    /// of the supplied point in the viewport.
+    ///
+    /// The equations here were derived as follows (for a single dimension):
+    /// |--------.--------------------------------|
+    /// L     l  m               r                R
+    ///
+    /// L, R are the original left/right bounds
+    /// l, r are the new left/right bounds
+    /// m is the zoom point
+    /// z is the zoom factor
+    /// p is m's percent in the viewport (see below for the calculation)
+    ///
+    /// We know m, L, R, and z. We can compute p directly. So we are solving for
+    /// l and r using the equations below.
+    /// 1. p = (m - L) / (R - L)    <-- Percent in original viewport from [0, 1]
+    /// 2. m = L + p (R - L)        <-- m is p% in the original viewport
+    /// 3. m = l + p (r - l)        <-- m is also p% in the new viewport
+    /// 4. z = (R - L) / (r - l)    <-- The zoom factor scales the input range to the output range
+    ///
+    /// You can solve the system of equations via substitution and you get the equations below.
     pub fn zoom_to(&self, point: (f64, f64), zoom: f64) -> Self {
         let left = self.left + (point.0 - self.left) * (1.0 - 1.0 / zoom);
         let right = (point.0 - left) / (point.0 - self.left) * (self.right - self.left) + left;
